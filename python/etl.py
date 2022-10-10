@@ -1,7 +1,6 @@
 # import libraries
 import pandas as pd
 from sqlalchemy import create_engine
-import sys
 
 def load_data(messages_filepath, categories_filepath):
     # load messages dataset
@@ -29,12 +28,10 @@ def load_data(messages_filepath, categories_filepath):
     return(df)
 
 def clean_data(df):
-    # drop the original categories column from `df`
-    df.drop(['categories'],axis=1,inplace=True)
-    # concatenate the original dataframe with the new `categories` dataframe
-    df=pd.concat([df,categories],axis=1)
     # drop duplicates
     df.drop_duplicates(inplace=True)
+    # drop nan
+    df.dropna(axis=0,inplace=True)
     return(df)
 
 def save_data(df, database_filename):
@@ -46,3 +43,6 @@ def run_etl(messages_filepath, categories_filepath,database_filename):
     df = load_data(messages_filepath, categories_filepath)
     df = clean_data(df)
     save_data(df,database_filename)
+    return(True)
+
+run_etl('../data/messages.csv','../data/categories.csv','../data/db.db')
